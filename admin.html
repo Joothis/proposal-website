@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔐 Admin Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #e91e63;
+      --bg: #0d0015;
+      --card-bg: rgba(233, 30, 99, 0.05);
+      --border: rgba(233, 30, 99, 0.2);
+      --text: #fff0f5;
+      --gold: #ffd700;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    .admin-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .admin-header h1 {
+      font-size: 2rem;
+      background: linear-gradient(135deg, var(--primary), var(--gold));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .admin-header p {
+      color: rgba(255,240,245,0.5);
+      margin-top: 8px;
+      font-size: 0.9rem;
+    }
+
+    .admin-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      width: 100%;
+      max-width: 600px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--gold);
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .form-group label .emoji {
+      margin-right: 6px;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 14px 18px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.04);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 20px rgba(233,30,99,0.2);
+      background: rgba(255,255,255,0.07);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-group input[type="color"] {
+      padding: 5px;
+      height: 50px;
+      cursor: pointer;
+    }
+
+    .form-group select {
+      cursor: pointer;
+    }
+
+    .form-group select option {
+      background: #1a0020;
+      color: var(--text);
+    }
+
+    .color-preview {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .color-preview .swatch {
+      width: 50px;
+      height: 50px;
+      border-radius: 12px;
+      border: 2px solid rgba(255,255,255,0.1);
+      flex-shrink: 0;
+    }
+
+    .color-presets {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .color-preset {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.15);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .color-preset:hover {
+      transform: scale(1.2);
+      border-color: white;
+    }
+
+    .color-preset.active {
+      border-color: white;
+      box-shadow: 0 0 15px rgba(255,255,255,0.3);
+    }
+
+    .btn-save {
+      width: 100%;
+      padding: 16px;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), #c2185b);
+      color: white;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+      letter-spacing: 1px;
+    }
+
+    .btn-save:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(233,30,99,0.4);
+    }
+
+    .btn-save:active {
+      transform: translateY(0);
+    }
+
+    .btn-preview {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid var(--primary);
+      border-radius: 12px;
+      background: transparent;
+      color: var(--primary);
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 12px;
+    }
+
+    .btn-preview:hover {
+      background: rgba(233,30,99,0.1);
+      transform: translateY(-2px);
+    }
+
+    .btn-reset {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      color: rgba(255,240,245,0.5);
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 12px;
+    }
+
+    .btn-reset:hover {
+      border-color: #ff5252;
+      color: #ff5252;
+      background: rgba(255,82,82,0.05);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: linear-gradient(135deg, var(--primary), #c2185b);
+      color: white;
+      padding: 14px 30px;
+      border-radius: 50px;
+      font-weight: 600;
+      box-shadow: 0 10px 40px rgba(233,30,99,0.4);
+      transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border), transparent);
+      margin: 30px 0;
+    }
+
+    .section-title {
+      font-size: 0.8rem;
+      color: rgba(255,240,245,0.4);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    .back-link {
+      display: inline-block;
+      color: var(--primary);
+      text-decoration: none;
+      margin-bottom: 30px;
+      font-size: 0.9rem;
+      transition: color 0.3s;
+    }
+
+    .back-link:hover { color: var(--gold); }
+
+    .live-preview {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 30px;
+      text-align: center;
+      margin-top: 30px;
+    }
+
+    .live-preview h3 {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: rgba(255,240,245,0.4);
+      margin-bottom: 15px;
+    }
+
+    .preview-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .preview-names {
+      font-size: 1.3rem;
+      margin-top: 10px;
+    }
+
+    .preview-names .heart { 
+      color: var(--primary);
+      display: inline-block;
+      animation: previewHeart 1.5s ease-in-out infinite;
+    }
+
+    @keyframes previewHeart {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+    }
+
+    /* --- Tablet (768px) --- */
+    @media (max-width: 768px) {
+      body { padding: 30px 16px; }
+      .admin-header { margin-bottom: 25px; }
+      .admin-header h1 { font-size: 1.7rem; }
+      .admin-card { padding: 30px 25px; border-radius: 16px; }
+      .form-group input, .form-group textarea, .form-group select { padding: 12px 15px; font-size: 0.95rem; }
+      .live-preview { padding: 20px; }
+      .preview-title { font-size: 1.5rem; }
+      .preview-names { font-size: 1.1rem; }
+    }
+
+    /* --- Mobile (480px) --- */
+    @media (max-width: 480px) {
+      body { padding: 20px 12px; }
+      .admin-header { margin-bottom: 20px; }
+      .admin-header h1 { font-size: 1.4rem; }
+      .admin-header p { font-size: 0.8rem; }
+      .admin-card { padding: 20px 16px; border-radius: 14px; }
+      .form-group { margin-bottom: 20px; }
+      .form-group label { font-size: 0.8rem; letter-spacing: 0.5px; }
+      .form-group input, .form-group textarea, .form-group select {
+        padding: 11px 13px;
+        font-size: 0.9rem;
+        border-radius: 10px;
+      }
+      .form-group textarea { min-height: 80px; }
+      .form-group input[type="color"] { height: 44px; }
+      .color-preview { flex-direction: column; align-items: flex-start; gap: 10px; }
+      .color-preset { width: 32px; height: 32px; }
+      .color-presets { gap: 8px; }
+      .btn-save { padding: 14px; font-size: 1rem; }
+      .btn-preview { padding: 12px; font-size: 0.9rem; }
+      .btn-reset { padding: 10px; font-size: 0.85rem; }
+      .divider { margin: 22px 0; }
+      .section-title { font-size: 0.75rem; letter-spacing: 1.5px; margin-bottom: 15px; }
+      .live-preview { padding: 18px 14px; border-radius: 12px; margin-top: 22px; }
+      .preview-title { font-size: 1.3rem; }
+      .preview-names { font-size: 1rem; }
+      .toast { font-size: 0.85rem; padding: 12px 22px; bottom: 20px; }
+      .back-link { font-size: 0.85rem; margin-bottom: 20px; }
+    }
+
+    /* --- Very small phones (360px) --- */
+    @media (max-width: 360px) {
+      body { padding: 15px 10px; }
+      .admin-header h1 { font-size: 1.25rem; }
+      .admin-card { padding: 16px 13px; }
+      .form-group input, .form-group textarea, .form-group select {
+        padding: 10px 11px;
+        font-size: 0.85rem;
+      }
+      .preview-title { font-size: 1.1rem; }
+      .color-preset { width: 28px; height: 28px; }
+    }
+
+    /* --- Touch device adjustments --- */
+    @media (hover: none) and (pointer: coarse) {
+      .btn-save:hover, .btn-preview:hover, .btn-reset:hover {
+        transform: none;
+      }
+      .btn-save:active { transform: scale(0.98); }
+      .btn-preview:active { transform: scale(0.98); }
+      .color-preset:hover { transform: none; }
+      .color-preset:active { transform: scale(1.15); }
+
+      /* Ensure minimum touch target sizes */
+      .form-group input, .form-group textarea, .form-group select { min-height: 44px; }
+      .btn-save, .btn-preview, .btn-reset { min-height: 48px; }
+      .color-preset { min-width: 44px; min-height: 44px; }
+      .back-link { padding: 8px 0; min-height: 44px; display: inline-flex; align-items: center; }
+    }
+
+    /* --- Prefers reduced motion --- */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-header">
+    <h1>🔐 Admin Portal</h1>
+    <p>Customize your proposal website</p>
+  </div>
+
+  <a href="index.html" class="back-link">← Back to Proposal</a>
+
+  <div class="admin-card">
+    <!-- NAMES SECTION -->
+    <div class="section-title">💑 Names</div>
+
+    <div class="form-group">
+      <label><span class="emoji">👨</span> His Name</label>
+      <input type="text" id="hisName" placeholder="Enter his name..." />
+    </div>
+
+    <div class="form-group">
+      <label><span class="emoji">👩</span> Her Name</label>
+      <input type="text" id="herName" placeholder="Enter her name..." />
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- CONTENT SECTION -->
+    <div class="section-title">✏️ Content</div>
+
+    <div class="form-group">
+      <label><span class="emoji">💌</span> Website Title</label>
+      <input type="text" id="siteName" placeholder="A Special Question..." />
+    </div>
+
+    <div class="form-group">
+      <label><span class="emoji">💬</span> Subtitle</label>
+      <input type="text" id="subtitle" placeholder="From my heart to yours..." />
+    </div>
+
+    <div class="form-group">
+      <label><span class="emoji">📝</span> Love Letter Message</label>
+      <textarea id="letterText" placeholder="Write your personal love letter message here..."></textarea>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- THEME SECTION -->
+    <div class="section-title">🎨 Theme</div>
+
+    <div class="form-group">
+      <label><span class="emoji">🎨</span> Theme Color</label>
+      <div class="color-preview">
+        <input type="color" id="themeColor" value="#e91e63" />
+        <div>
+          <div class="color-presets">
+            <div class="color-preset" data-color="#e91e63" style="background:#e91e63" title="Rose"></div>
+            <div class="color-preset" data-color="#f44336" style="background:#f44336" title="Red"></div>
+            <div class="color-preset" data-color="#9c27b0" style="background:#9c27b0" title="Purple"></div>
+            <div class="color-preset" data-color="#e040fb" style="background:#e040fb" title="Pink Purple"></div>
+            <div class="color-preset" data-color="#ff5722" style="background:#ff5722" title="Coral"></div>
+            <div class="color-preset" data-color="#ffd700" style="background:#ffd700" title="Gold"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE PREVIEW -->
+    <div class="live-preview">
+      <h3>Live Preview</h3>
+      <div class="preview-title" id="previewTitle">A Special Question</div>
+      <div class="preview-names">
+        <span id="previewHis">Romeo</span> 
+        <span class="heart">❤️</span> 
+        <span id="previewHers">Juliet</span>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ACTIONS -->
+    <button class="btn-save" id="saveBtn">💾 Save Changes</button>
+    <button class="btn-preview" id="previewBtn">👁️ Preview Website</button>
+    <button class="btn-reset" id="resetBtn">🗑️ Reset to Defaults</button>
+  </div>
+
+  <div class="toast" id="toast">✅ Changes saved successfully!</div>
+
+  <script>
+    // ==================== LOAD SAVED VALUES ====================
+    const fields = {
+      hisName: { key: 'proposal_hisName', default: 'Romeo' },
+      herName: { key: 'proposal_herName', default: 'Juliet' },
+      siteName: { key: 'proposal_siteName', default: 'A Special Question' },
+      subtitle: { key: 'proposal_subtitle', default: 'From my heart to yours...' },
+      letterText: { key: 'proposal_letterText', default: '' },
+      themeColor: { key: 'proposal_themeColor', default: '#e91e63' },
+    };
+
+    // Populate inputs from localStorage
+    Object.entries(fields).forEach(([id, config]) => {
+      const el = document.getElementById(id);
+      const saved = localStorage.getItem(config.key);
+      if (saved) {
+        el.value = saved;
+      } else if (config.default) {
+        el.value = config.default;
+      }
+    });
+
+    // ==================== LIVE PREVIEW ====================
+    function updatePreview() {
+      document.getElementById('previewTitle').textContent = 
+        document.getElementById('siteName').value || 'A Special Question';
+      document.getElementById('previewHis').textContent = 
+        document.getElementById('hisName').value || 'Romeo';
+      document.getElementById('previewHers').textContent = 
+        document.getElementById('herName').value || 'Juliet';
+      
+      const color = document.getElementById('themeColor').value;
+      document.getElementById('previewTitle').style.background = 
+        `linear-gradient(135deg, ${color}, #ffd700)`;
+      document.getElementById('previewTitle').style.webkitBackgroundClip = 'text';
+      document.getElementById('previewTitle').style.webkitTextFillColor = 'transparent';
+      document.querySelector('.preview-names .heart').style.color = color;
+    }
+
+    // Attach live preview listeners
+    ['hisName', 'herName', 'siteName', 'subtitle', 'letterText', 'themeColor'].forEach(id => {
+      document.getElementById(id).addEventListener('input', updatePreview);
+    });
+
+    // Color presets
+    document.querySelectorAll('.color-preset').forEach(preset => {
+      preset.addEventListener('click', function() {
+        const color = this.dataset.color;
+        document.getElementById('themeColor').value = color;
+        document.querySelectorAll('.color-preset').forEach(p => p.classList.remove('active'));
+        this.classList.add('active');
+        updatePreview();
+      });
+    });
+
+    // Initial preview
+    updatePreview();
+
+    // Mark active preset
+    const currentColor = document.getElementById('themeColor').value;
+    document.querySelectorAll('.color-preset').forEach(p => {
+      if (p.dataset.color === currentColor) p.classList.add('active');
+    });
+
+    // ==================== SAVE ====================
+    document.getElementById('saveBtn').addEventListener('click', () => {
+      Object.entries(fields).forEach(([id, config]) => {
+        const value = document.getElementById(id).value;
+        if (value) {
+          localStorage.setItem(config.key, value);
+        } else {
+          localStorage.removeItem(config.key);
+        }
+      });
+
+      showToast('✅ Changes saved successfully!');
+    });
+
+    // ==================== PREVIEW ====================
+    document.getElementById('previewBtn').addEventListener('click', () => {
+      // Save first, then redirect
+      Object.entries(fields).forEach(([id, config]) => {
+        const value = document.getElementById(id).value;
+        if (value) localStorage.setItem(config.key, value);
+      });
+      window.location.href = 'index.html';
+    });
+
+    // ==================== RESET ====================
+    document.getElementById('resetBtn').addEventListener('click', () => {
+      if (confirm('Are you sure? This will reset all settings to defaults.')) {
+        Object.values(fields).forEach(config => {
+          localStorage.removeItem(config.key);
+        });
+
+        Object.entries(fields).forEach(([id, config]) => {
+          document.getElementById(id).value = config.default;
+        });
+
+        updatePreview();
+        showToast('🗑️ Settings reset to defaults!');
+      }
+    });
+
+    // ==================== TOAST ====================
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+  </script>
+</body>
+</html>
